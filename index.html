@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" ng-app="todoApp">
+<head>
+	<title>My Task Manager</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- CSS Start -->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css"> -->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<!-- CSS End -->
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+	<div class="container ng-cloak" ng-controller="todosController">
+		<header class="row text-center">
+			<div class="col-xs-12">
+				<h1>
+					My Task Manager&nbsp;
+					<a class="btn btn-success btn-xs" title="Add a new task" ng-click="addForm()">
+						<span class="glyphicon glyphicon-plus"></span>
+					</a>
+				</h1>
+				<h4>
+					Currently <span class="label" ng-class="{'label-success': todos.length, 'label-danger': todos.length == 0}"><% todos.length %></span> <ng-pluralize count="todos.length" when="tasks"></ng-pluralize> and completed <span class="label" ng-class="{'label-info': finishedTodos().length, 'label-danger': finishedTodos().length == 0}"><% finishedTodos().length %></span><ng-pluralize count="finishedTodos().length" when="tasks"></ng-pluralize>
+				</h4>
+			</div>
+		</header>
+		<div class="row ng-cloak" ng-if="todos.length > 0">
+			<div class="col-xs-12">
+				<label for="searchText" class="control-label">Do some filtering...</label>
+				<input type="text" ng-model="searchText" class="form-control input-lg" placeholder="Enter a filter option">
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="alert alert-success" ng-show="finishedTodos().length == todos.length && todos.length != 0">
+					<h5 class="text-center"><strong>Superb!!!</strong> It seems you have finished all of your tasks</h5>
+				</div>
+			</div>
+			<div class="col-xs-12">
+				<table class="table table-striped table-hover table-bordered text-center">
+					<thead>
+						<th class="text-center">#</th>
+						<th class="text-center sort" sort-arrow ng-click="orderOption='name'; reverse = !reverse">
+							Task
+						</th>
+						<th class="text-center">Description</th>
+						<th class="text-center sort" sort-arrow ng-click="orderOption='date'; reverse = !reverse">
+							Date Added
+						</th>        					
+						<th class="text-center">Actions</th>
+					</thead>
+					<tbody ng-if="todos.length == 0">
+						<tr>
+							<td colspan="5" class="text-center">
+								<h3>No tasks found</h3>
+							</td>
+						</tr>
+					</tbody>
+					<tbody ng-if="todos.length > 0">
+						<tr ng-repeat="todo in filteredTodos = (todos | filter:searchText) | orderBy:orderOption:reverse">
+							<td class="done-<%todo.done%>"><% $index + 1 %></td>
+							<td class="done-<%todo.done%>"><% todo.name %></td>
+							<td class="done-<%todo.done%>"><% todo.description %></td>
+							<td class="done-<%todo.done%>"><% todo.date | date:"dd/MM/yyyy HH:mm:ss" %></td>
+							<td>
+								<button type="button" class="btn btn-info btn-sm" ng-click="check(todo)" title="<% todo.done ? 'Mark as unfinished task' : 'Mark as finished task' %>">
+									<span class="glyphicon glyphicon-ok"></span>
+								</button>     								
+								<button type="button" class="btn btn-warning btn-sm" ng-class="{disabled: todo.done}" ng-click="edit(todo)" title="Edit task">
+									<span class="glyphicon glyphicon-pencil"></span>
+								</button>    								
+								<button type="button" class="btn btn-danger btn-sm" ng-click="delete(todo)" title="Delete task">
+									<span class="glyphicon glyphicon-remove"></span>
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row" ng-show="showAddForm">
+			<div class="col-xs-12 col-md-6 col-md-offset-3">
+				<legend>
+					<h2 class="text-center">
+						Add new Task&nbsp;
+						<a class="btn btn-danger btn-xs" title="Hide Form" ng-click="hideForm()">
+							<span class="glyphicon glyphicon-minus"></span>
+						</a>
+					</h2>
+				</legend>
+				<div class="alert alert-danger text-center" ng-if="todoForm.$invalid && todoForm.$dirty">
+					<strong>Oops!!!</strong> Please enter a valid new task
+				</div>        			
+				<div class="alert alert-success text-center" ng-if="todoForm.$valid">
+					<strong>Great!!!</strong> Now you can add your new task
+				</div>
+				<form name="todoForm" role="form" ng-submit="submit()" novalidate>
+					<div class="form-group" ng-class="{'has-success': todoForm.name.$valid, 'has-error': todoForm.name.$invalid && todoForm.name.$dirty}">
+						<label for="name">Task</label>
+						<input type="text" name="name" placeholder="Enter a task name" class="form-control input-lg" ng-model="name" ng-required="true" ng-minlength="3">
+						<span class="help-block" ng-if="todoForm.name.$invalid && todoForm.name.$dirty">Please enter a valid task's name</span>
+					</div>          				
+					<div class="form-group" ng-class="{'has-success': todoForm.description.$valid, 'has-error': todoForm.description.$invalid && todoForm.description.$dirty}">
+						<label for="description">Description</label>
+						<textarea type="text" name="description" placeholder="Enter a task name" class="form-control textarea input-lg" ng-model="description" ng-required="true" ng-minlength="3" rows="5"></textarea>
+						<span class="help-block" ng-if="todoForm.description.$invalid && todoForm.description.$dirty">Please enter a valid task's description</span>
+					</div>        				
+					<div class="form-group">
+						<button type="submit" class="btn btn-success btn-lg btn-block">Add new Task&nbsp;<span class="glyphicon glyphicon-chevron-right"></span></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Javascript Start -->
+	<script src="js/angular.min.js"></script>
+	<script src="js/app.js"></script>
+	<!-- Javascript End -->
+</body>
+</html>

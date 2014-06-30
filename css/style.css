@@ -1,0 +1,58 @@
+/*! Todos - v1.0.0 - 12-01-2014 11:01:17 */
+
+/* line 1, style.sass */
+.row {
+  margin: 20px 0 60px;
+}
+
+/* line 3, style.sass */
+a {
+  color: #aaaaaa;
+}
+/* line 5, style.sass */
+a:hover {
+  color: black;
+}
+
+/* line 7, style.sass */
+*:focus,
+.btn:focus {
+  outline: none;
+}
+
+/* line 10, style.sass */
+textarea {
+  resize: none;
+}
+
+/* line 12, style.sass */
+.ng-cloak {
+  display: none !important;
+}
+
+/* line 14, style.sass */
+.table > thead > tr > th,
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+/* line 17, style.sass */
+.done-true {
+  text-decoration: line-through;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* line 21, style.sass */
+.table th.sort {
+  background: transparent url(../img/bg.gif) no-repeat center right;
+  cursor: pointer;
+}
+/* line 24, style.sass */
+.table th.sort.sortUp {
+  background: transparent url(../img/asc.gif) no-repeat center right;
+}
+/* line 26, style.sass */
+.table th.sort.sortDown {
+  background: transparent url(../img/desc.gif) no-repeat center right;
+}
